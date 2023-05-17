@@ -12,7 +12,6 @@ const userSchema = Schema({
     is_online: { type: Boolean, required: true },
     is_verified: { type: Boolean, required: true },
     verify_code: { type: String, required: true },
-    empresa: {type: Types.ObjectId, ref: "bussiness" }
 
 }, {
     timestamps: true

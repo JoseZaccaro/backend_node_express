@@ -1,4 +1,7 @@
-const User = require('../database/models/User.js')
+const User = require('../database/models/User.js');
+const bcryptjs = require('bcryptjs');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const authController = {
 
@@ -10,11 +13,11 @@ const authController = {
                 console.log("Estoy en el if");
                 user = await User.findOne({ _id: req.query.id });
             } else {
-                
+
                 console.log("Estoy en el else");
                 user = await User.find();
             }
-            
+
             throw new Error("Fallé a proposito xd")
             res.status(200).json({
                 data: user,
@@ -31,6 +34,60 @@ const authController = {
             })
         }
     },
+    signup: async (req, res, next) => {
+        try {
+            req.body.photo = 'fdsaf';
+            req.body.role = 0;
+            req.body.is_online = false;
+            req.body.is_verified = false;
+
+            req.body.verify_code = crypto.randomBytes(10).toString('hex');
+
+            req.body.password = bcryptjs.hashSync(req.body.password, 10)
+
+
+            await User.create(req.body);
+
+            return res.status(201).json({
+                message: 'Usuario creado correctamente'
+            })
+
+        } catch (err) {
+            next(err)
+        }
+
+    },
+    signin: async (req, res, next) => {
+        try {
+            const newUser = await User.findOne({ email: req.body.email })
+            newUser.is_online = true;
+            await newUser.save();
+
+            const token = jwt.sign(
+                {
+                    id: req.user.id,
+                    role: req.user.role
+                },
+                process.env.SECRET,
+                { expiresIn: 60 * 60 * 24 }
+            )
+
+            const user = {
+                email: req.user.email,
+                photo: req.user.photo
+            }
+
+            return res.status(200).json({
+                success: true,
+                token,
+                user
+            })
+
+
+        } catch (err) {
+            next(err)
+        }
+    }
 
 
 };

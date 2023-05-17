@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const server = express();
-const router = require('./routes');   
+const router = require('./routes');
+const morgan = require('morgan')
 
 require('./database/dbconnection.js')
 const port = process.env.PORT || "3000";
@@ -12,6 +13,7 @@ const host = process.env.HOST || "0.0.0.0";
 server.set('port', port);
 
 server.use(cors());
+server.use(morgan('dev'))
 server.use(express.json());
 
 server.use(express.static(path.join(__dirname, "assets")));
@@ -22,4 +24,7 @@ server.set("view engine", "ejs");
 
 server.use("/api", router);
 
-server.listen(port, host, function() { console.log("listening on port " + port)})
+server.listen(port, host, function() { 
+    console.log("listening on port " + port);
+    console.log("http://localhost:" + port);
+})
