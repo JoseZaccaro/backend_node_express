@@ -10,10 +10,14 @@ require('./database/dbconnection.js')
 const port = process.env.PORT || "3000";
 const host = process.env.HOST || "0.0.0.0";
 
+const morganOpts = {
+    skip: () => process.env.NODE_ENV === 'test'
+}
+
 server.set('port', port);
 
 server.use(cors());
-server.use(morgan('dev'))
+server.use(morgan('dev', morganOpts))
 server.use(express.json());
 
 server.use(express.static(path.join(__dirname, "assets")));
@@ -28,3 +32,5 @@ server.listen(port, host, function() {
     console.log("listening on port " + port);
     console.log("http://localhost:" + port);
 })
+
+module.exports = server;

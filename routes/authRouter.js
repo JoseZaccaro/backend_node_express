@@ -3,9 +3,9 @@ const router = require('express').Router()
 const { getAllUsers, signup, signin } = require('../controllers/authController')
 const { accountExistsSignup, accountExistsSignin, isVerified, verifyPassword } = require('../middlewares/auth');
 
-router.get("/", (req, res, next) => {
-    res.send("Ruta get de authRouter")
-});
+// router.get("/", (req, res, next) => {
+//     res.send("Ruta get de authRouter")
+// });
 
 router.get("/all", getAllUsers)
 

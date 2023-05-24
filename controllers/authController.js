@@ -7,22 +7,35 @@ const authController = {
 
     getAllUsers: async (req, res, next) => {
         try {
-            let user;
-            console.log(req.query)
-            if (req.query.id) {
-                console.log("Estoy en el if");
-                user = await User.findOne({ _id: req.query.id });
-            } else {
+            // let user;
+            // console.log(req.query)
+            // if (req.query.id) {
+            //     console.log("Estoy en el if");
+            //     user = await User.findOne({ _id: req.query.id });
+            // } else {
 
-                console.log("Estoy en el else");
-                user = await User.find();
+            //     console.log("Estoy en el else");
+            //     user = await User.find();
+            // }
+
+            // throw new Error("Fallé a proposito xd")
+            // res.status(200).json({
+            //     data: user,
+            //     success: true,
+            // })
+
+            const users = await User.find();
+
+            if(users.length < 0) {
+                return res.status(404).json({
+                    message: 'users not found'
+                });
             }
 
-            throw new Error("Fallé a proposito xd")
-            res.status(200).json({
-                data: user,
-                success: true,
-            })
+            return res.status(200).json({
+                users
+            });
+
 
         } catch (error) {
             console.log(error.message);
@@ -46,10 +59,11 @@ const authController = {
             req.body.password = bcryptjs.hashSync(req.body.password, 10)
 
 
-            await User.create(req.body);
+            const user = await User.create(req.body);
 
             return res.status(201).json({
-                message: 'Usuario creado correctamente'
+                message: 'Usuario creado correctamente',
+                user
             })
 
         } catch (err) {
